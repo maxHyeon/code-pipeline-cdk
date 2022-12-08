@@ -1,0 +1,36 @@
+version: 0.2
+env:
+  parameter-store:
+    # GIT_USER: /prod/codecommit-repo/user
+    GIT_EMAIL: /prod/codecommit-repo/e-mail
+  # secrets-manager:
+  #   GIT_PASSWORD: prod/codecommit-repo/pw:CODECOMMIT_PW
+  git-credential-helper: yes
+phases:
+  pre_build:
+    commands:
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - TAG=$(cat build-infos.yml |grep TAG | awk -F ':' '{gsub(/ /,""); print $2}')
+      - echo $TAG
+      - git config --global user.email "$GIT_EMAIL"
+      - git config --global --replace-all credential.helper '!aws codecommit credential-helper $@'
+      - git config --global credential.UseHttpPath true
+      # - echo ""https://$GIT_USER:$GIT_PASSWORD@.git" > ~/.git-credentials
+      # - git config --global --replace-all credential.helper 'store --file ~/.git-credentials'
+  build:
+    commands:
+      - echo Deploy Started `date`
+      - echo Edit Code And Commit
+      - colon=$(python -c "print(chr(58))")
+      - git clone https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/eks-cicd-workshop-helm
+      - cd eks-cicd-workshop-helm
+      - git checkout master
+      - sed -i -e "/^image:/,/tag:/{/^\([[:space:]]*tag${colon} \).*/s//\1$TAG/}" values.yaml
+      - git add .
+      - cat values.yaml | grep tag
+      - git commit -m “tag_change_to_$TAG_for_app_version_upgrade”
+  post_build:
+    commands:
+      - echo Commit Completed `date`
+      - echo Pushing Code
+      - git push origin master

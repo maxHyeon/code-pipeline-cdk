@@ -1,0 +1,1457 @@
+{
+ "Resources": {
+  "eksworkshopdockerpipelineeksworkshopcontainer250046F3": {
+   "Type": "AWS::ECR::Repository",
+   "Properties": {
+    "RepositoryName": "eks-workshop"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainergitC360FCD9": {
+   "Type": "AWS::CodeCommit::Repository",
+   "Properties": {
+    "RepositoryName": "eks-workshop-app",
+    "RepositoryDescription": "Application code"
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container-git/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainergiteksworkshopstackeksworkshopdockerpipelineeksworkshopcontainerpipelineD08FB083EventRule15A667E7": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "EventPattern": {
+     "source": [
+      "aws.codecommit"
+     ],
+     "resources": [
+      {
+       "Fn::GetAtt": [
+        "eksworkshopdockerpipelineeksworkshopcontainergitC360FCD9",
+        "Arn"
+       ]
+      }
+     ],
+     "detail-type": [
+      "CodeCommit Repository State Change"
+     ],
+     "detail": {
+      "event": [
+       "referenceCreated",
+       "referenceUpdated"
+      ],
+      "referenceName": [
+       "master"
+      ]
+     }
+    },
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::Join": [
+        "",
+        [
+         "arn:",
+         {
+          "Ref": "AWS::Partition"
+         },
+         ":codepipeline:ap-northeast-2:",
+         {
+          "Ref": "AWS::AccountId"
+         },
+         ":",
+         {
+          "Ref": "eksworkshopdockerpipelineeksworkshopcontainerpipelineB5DF00DB"
+         }
+        ]
+       ]
+      },
+      "Id": "Target0",
+      "RoleArn": {
+       "Fn::GetAtt": [
+        "eksworkshopdockerpipelineeksworkshopcontainerpipelineEventsRole9AC6D9D1",
+        "Arn"
+       ]
+      }
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container-git/eksworkshopstackeksworkshopdockerpipelineeksworkshopcontainerpipelineD08FB083EventRule/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshophelmgitA1CE24F5": {
+   "Type": "AWS::CodeCommit::Repository",
+   "Properties": {
+    "RepositoryName": "eks-workshop-helm",
+    "RepositoryDescription": "Helm Chart"
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-helm-git/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03": {
+   "Type": "AWS::KMS::Key",
+   "Properties": {
+    "KeyPolicy": {
+     "Statement": [
+      {
+       "Action": "kms:*",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/ArtifactsBucketEncryptionKey/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyAlias89DAB4F0": {
+   "Type": "AWS::KMS::Alias",
+   "Properties": {
+    "AliasName": "alias/codepipeline-eksworkshopstackeksworkshopdockerpipelineeksworkshopcontainerpipelined08fb083",
+    "TargetKeyId": {
+     "Fn::GetAtt": [
+      "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03",
+      "Arn"
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/ArtifactsBucketEncryptionKeyAlias/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "KMSMasterKeyID": {
+         "Fn::GetAtt": [
+          "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03",
+          "Arn"
+         ]
+        },
+        "SSEAlgorithm": "aws:kms"
+       }
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/ArtifactsBucket/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketPolicy6328C5C9": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/ArtifactsBucket/Policy/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineRole47B9A81E": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "codepipeline.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Role/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineRoleDefaultPolicyFF1CDAF0": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainerpipelineSourceCodeCommitSourceCodePipelineActionRoleD1A55ED7",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainerpipelineDockerBuildDockerBuildandPushECRCodePipelineActionRole34C2E433",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainerpipelineImageTagPushToHelmCodePipelineActionRole9EC538CF",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "eksworkshopdockerpipelineeksworkshopcontainerpipelineRoleDefaultPolicyFF1CDAF0",
+    "Roles": [
+     {
+      "Ref": "eksworkshopdockerpipelineeksworkshopcontainerpipelineRole47B9A81E"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Role/DefaultPolicy/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineB5DF00DB": {
+   "Type": "AWS::CodePipeline::Pipeline",
+   "Properties": {
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "eksworkshopdockerpipelineeksworkshopcontainerpipelineRole47B9A81E",
+      "Arn"
+     ]
+    },
+    "Stages": [
+     {
+      "Actions": [
+       {
+        "ActionTypeId": {
+         "Category": "Source",
+         "Owner": "AWS",
+         "Provider": "CodeCommit",
+         "Version": "1"
+        },
+        "Configuration": {
+         "RepositoryName": {
+          "Fn::GetAtt": [
+           "eksworkshopdockerpipelineeksworkshopcontainergitC360FCD9",
+           "Name"
+          ]
+         },
+         "BranchName": "master",
+         "PollForSourceChanges": false
+        },
+        "Name": "CodeCommit_Source",
+        "OutputArtifacts": [
+         {
+          "Name": "Artifact_Source_CodeCommit_Source"
+         }
+        ],
+        "RoleArn": {
+         "Fn::GetAtt": [
+          "eksworkshopdockerpipelineeksworkshopcontainerpipelineSourceCodeCommitSourceCodePipelineActionRoleD1A55ED7",
+          "Arn"
+         ]
+        },
+        "RunOrder": 1
+       }
+      ],
+      "Name": "Source"
+     },
+     {
+      "Actions": [
+       {
+        "ActionTypeId": {
+         "Category": "Build",
+         "Owner": "AWS",
+         "Provider": "CodeBuild",
+         "Version": "1"
+        },
+        "Configuration": {
+         "ProjectName": {
+          "Ref": "eksworkshopdockerpipelineDockerBuild685274AE"
+         }
+        },
+        "InputArtifacts": [
+         {
+          "Name": "Artifact_Source_CodeCommit_Source"
+         }
+        ],
+        "Name": "DockerBuild_and_Push_ECR",
+        "OutputArtifacts": [
+         {
+          "Name": "docker"
+         }
+        ],
+        "RoleArn": {
+         "Fn::GetAtt": [
+          "eksworkshopdockerpipelineeksworkshopcontainerpipelineDockerBuildDockerBuildandPushECRCodePipelineActionRole34C2E433",
+          "Arn"
+         ]
+        },
+        "RunOrder": 1
+       }
+      ],
+      "Name": "DockerBuild"
+     },
+     {
+      "Actions": [
+       {
+        "ActionTypeId": {
+         "Category": "Build",
+         "Owner": "AWS",
+         "Provider": "CodeBuild",
+         "Version": "1"
+        },
+        "Configuration": {
+         "ProjectName": {
+          "Ref": "eksworkshopdockerpipelineImageTagPushToHelm21FAE0A9"
+         }
+        },
+        "InputArtifacts": [
+         {
+          "Name": "docker"
+         }
+        ],
+        "Name": "Image_Tag_Push_To_Helm",
+        "OutputArtifacts": [
+         {
+          "Name": "helm"
+         }
+        ],
+        "RoleArn": {
+         "Fn::GetAtt": [
+          "eksworkshopdockerpipelineeksworkshopcontainerpipelineImageTagPushToHelmCodePipelineActionRole9EC538CF",
+          "Arn"
+         ]
+        },
+        "RunOrder": 1
+       }
+      ],
+      "Name": "Image_Tag_Push_To_Helm"
+     }
+    ],
+    "ArtifactStore": {
+     "EncryptionKey": {
+      "Id": {
+       "Fn::GetAtt": [
+        "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03",
+        "Arn"
+       ]
+      },
+      "Type": "KMS"
+     },
+     "Location": {
+      "Ref": "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7"
+     },
+     "Type": "S3"
+    },
+    "Name": "eks-workshop"
+   },
+   "DependsOn": [
+    "eksworkshopdockerpipelineeksworkshopcontainerpipelineRoleDefaultPolicyFF1CDAF0",
+    "eksworkshopdockerpipelineeksworkshopcontainerpipelineRole47B9A81E"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineSourceCodeCommitSourceCodePipelineActionRoleD1A55ED7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Source/CodeCommit_Source/CodePipelineActionRole/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineSourceCodeCommitSourceCodePipelineActionRoleDefaultPolicyF6123C8E": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "codecommit:GetBranch",
+        "codecommit:GetCommit",
+        "codecommit:UploadArchive",
+        "codecommit:GetUploadArchiveStatus",
+        "codecommit:CancelUploadArchive"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainergitC360FCD9",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "eksworkshopdockerpipelineeksworkshopcontainerpipelineSourceCodeCommitSourceCodePipelineActionRoleDefaultPolicyF6123C8E",
+    "Roles": [
+     {
+      "Ref": "eksworkshopdockerpipelineeksworkshopcontainerpipelineSourceCodeCommitSourceCodePipelineActionRoleD1A55ED7"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Source/CodeCommit_Source/CodePipelineActionRole/DefaultPolicy/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineEventsRole9AC6D9D1": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "events.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/EventsRole/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineEventsRoleDefaultPolicyDB232F9C": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "codepipeline:StartPipelineExecution",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":codepipeline:ap-northeast-2:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":",
+          {
+           "Ref": "eksworkshopdockerpipelineeksworkshopcontainerpipelineB5DF00DB"
+          }
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "eksworkshopdockerpipelineeksworkshopcontainerpipelineEventsRoleDefaultPolicyDB232F9C",
+    "Roles": [
+     {
+      "Ref": "eksworkshopdockerpipelineeksworkshopcontainerpipelineEventsRole9AC6D9D1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/EventsRole/DefaultPolicy/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineDockerBuildDockerBuildandPushECRCodePipelineActionRole34C2E433": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/DockerBuild/DockerBuild_and_Push_ECR/CodePipelineActionRole/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineDockerBuildDockerBuildandPushECRCodePipelineActionRoleDefaultPolicyB2D138F3": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "codebuild:BatchGetBuilds",
+        "codebuild:StartBuild",
+        "codebuild:StopBuild"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineDockerBuild685274AE",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "eksworkshopdockerpipelineeksworkshopcontainerpipelineDockerBuildDockerBuildandPushECRCodePipelineActionRoleDefaultPolicyB2D138F3",
+    "Roles": [
+     {
+      "Ref": "eksworkshopdockerpipelineeksworkshopcontainerpipelineDockerBuildDockerBuildandPushECRCodePipelineActionRole34C2E433"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/DockerBuild/DockerBuild_and_Push_ECR/CodePipelineActionRole/DefaultPolicy/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineImageTagPushToHelmCodePipelineActionRole9EC538CF": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Image_Tag_Push_To_Helm/Image_Tag_Push_To_Helm/CodePipelineActionRole/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineeksworkshopcontainerpipelineImageTagPushToHelmCodePipelineActionRoleDefaultPolicyB860BDBD": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "codebuild:BatchGetBuilds",
+        "codebuild:StartBuild",
+        "codebuild:StopBuild"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineImageTagPushToHelm21FAE0A9",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "eksworkshopdockerpipelineeksworkshopcontainerpipelineImageTagPushToHelmCodePipelineActionRoleDefaultPolicyB860BDBD",
+    "Roles": [
+     {
+      "Ref": "eksworkshopdockerpipelineeksworkshopcontainerpipelineImageTagPushToHelmCodePipelineActionRole9EC538CF"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Image_Tag_Push_To_Helm/Image_Tag_Push_To_Helm/CodePipelineActionRole/DefaultPolicy/Resource"
+   }
+  },
+  "eksworkshopdockerpipelinemySsmParameter34FB3938": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Type": "String",
+    "Value": "testuser@enablement-workshop.com",
+    "Name": "/prod/codecommit-repo/e-mail"
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/mySsmParameter/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineDockerBuildRoleAFA6FFC5": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "codebuild.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/DockerBuild/Role/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineDockerBuildRoleDefaultPolicy3B6C9981": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:ap-northeast-2:",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "eksworkshopdockerpipelineDockerBuild685274AE"
+           }
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:ap-northeast-2:",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "eksworkshopdockerpipelineDockerBuild685274AE"
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "codebuild:CreateReportGroup",
+        "codebuild:CreateReport",
+        "codebuild:UpdateReport",
+        "codebuild:BatchPutTestCases",
+        "codebuild:BatchPutCodeCoverages"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":codebuild:ap-northeast-2:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":report-group/",
+          {
+           "Ref": "eksworkshopdockerpipelineDockerBuild685274AE"
+          },
+          "-*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainer250046F3",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "ecr:GetAuthorizationToken",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "ecr:PutImage",
+        "ecr:InitiateLayerUpload",
+        "ecr:UploadLayerPart",
+        "ecr:CompleteLayerUpload"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainer250046F3",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ecr:ap-northeast-2:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":repository/*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "eksworkshopdockerpipelineDockerBuildRoleDefaultPolicy3B6C9981",
+    "Roles": [
+     {
+      "Ref": "eksworkshopdockerpipelineDockerBuildRoleAFA6FFC5"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/DockerBuild/Role/DefaultPolicy/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineDockerBuild685274AE": {
+   "Type": "AWS::CodeBuild::Project",
+   "Properties": {
+    "Artifacts": {
+     "Type": "CODEPIPELINE"
+    },
+    "Environment": {
+     "ComputeType": "BUILD_GENERAL1_SMALL",
+     "EnvironmentVariables": [
+      {
+       "Name": "REPO_ECR",
+       "Type": "PLAINTEXT",
+       "Value": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::Select": [
+            4,
+            {
+             "Fn::Split": [
+              ":",
+              {
+               "Fn::GetAtt": [
+                "eksworkshopdockerpipelineeksworkshopcontainer250046F3",
+                "Arn"
+               ]
+              }
+             ]
+            }
+           ]
+          },
+          ".dkr.ecr.",
+          {
+           "Fn::Select": [
+            3,
+            {
+             "Fn::Split": [
+              ":",
+              {
+               "Fn::GetAtt": [
+                "eksworkshopdockerpipelineeksworkshopcontainer250046F3",
+                "Arn"
+               ]
+              }
+             ]
+            }
+           ]
+          },
+          ".",
+          {
+           "Ref": "AWS::URLSuffix"
+          },
+          "/",
+          {
+           "Ref": "eksworkshopdockerpipelineeksworkshopcontainer250046F3"
+          }
+         ]
+        ]
+       }
+      }
+     ],
+     "Image": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
+     "ImagePullCredentialsType": "CODEBUILD",
+     "PrivilegedMode": true,
+     "Type": "LINUX_CONTAINER"
+    },
+    "ServiceRole": {
+     "Fn::GetAtt": [
+      "eksworkshopdockerpipelineDockerBuildRoleAFA6FFC5",
+      "Arn"
+     ]
+    },
+    "Source": {
+     "BuildSpec": "buildspec.yml",
+     "Type": "CODEPIPELINE"
+    },
+    "Cache": {
+     "Type": "NO_CACHE"
+    },
+    "EncryptionKey": {
+     "Fn::GetAtt": [
+      "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/DockerBuild/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineImageTagPushToHelmRole5ECBB842": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "codebuild.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/ImageTagPushToHelm/Role/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineImageTagPushToHelmRoleDefaultPolicy1D9FD39A": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:ap-northeast-2:",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "eksworkshopdockerpipelineImageTagPushToHelm21FAE0A9"
+           }
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:ap-northeast-2:",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "eksworkshopdockerpipelineImageTagPushToHelm21FAE0A9"
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "codebuild:CreateReportGroup",
+        "codebuild:CreateReport",
+        "codebuild:UpdateReport",
+        "codebuild:BatchPutTestCases",
+        "codebuild:BatchPutCodeCoverages"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":codebuild:ap-northeast-2:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":report-group/",
+          {
+           "Ref": "eksworkshopdockerpipelineImageTagPushToHelm21FAE0A9"
+          },
+          "-*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "ssm:GetParameters",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "codecommit:GitPull",
+        "codecommit:GitPush"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "eksworkshopdockerpipelineImageTagPushToHelmRoleDefaultPolicy1D9FD39A",
+    "Roles": [
+     {
+      "Ref": "eksworkshopdockerpipelineImageTagPushToHelmRole5ECBB842"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/ImageTagPushToHelm/Role/DefaultPolicy/Resource"
+   }
+  },
+  "eksworkshopdockerpipelineImageTagPushToHelm21FAE0A9": {
+   "Type": "AWS::CodeBuild::Project",
+   "Properties": {
+    "Artifacts": {
+     "Type": "CODEPIPELINE"
+    },
+    "Environment": {
+     "ComputeType": "BUILD_GENERAL1_SMALL",
+     "Image": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
+     "ImagePullCredentialsType": "CODEBUILD",
+     "PrivilegedMode": true,
+     "Type": "LINUX_CONTAINER"
+    },
+    "ServiceRole": {
+     "Fn::GetAtt": [
+      "eksworkshopdockerpipelineImageTagPushToHelmRole5ECBB842",
+      "Arn"
+     ]
+    },
+    "Source": {
+     "BuildSpec": "version: 0.2\nenv:\n  parameter-store:\n    GIT_EMAIL: /prod/codecommit-repo/e-mail\n  git-credential-helper: true\nphases:\n  pre_build:\n    commands:\n      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)\n      - TAG=$(cat build-infos.yml |grep TAG | awk -F ':' '{gsub(/ /,\"\"); print $2}')\n      - echo $TAG\n      - git config --global user.email \"$GIT_EMAIL\"\n      - git config --global --replace-all credential.helper '!aws codecommit credential-helper $@'\n      - git config --global credential.UseHttpPath true\n  build:\n    commands:\n      - echo Deploy Started `date`\n      - echo Edit Code And Commit\n      - colon=$(python -c \"print(chr(58))\")\n      - git clone https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/eks-cicd-workshop-helm\n      - cd eks-cicd-workshop-helm\n      - git checkout master\n      - sed -i -e \"/^image:/,/tag:/{/^\\([[:space:]]*tag${colon} \\).*/s//\\1$TAG/}\" values.yaml\n      - git add .\n      - cat values.yaml | grep tag\n      - git commit -m “tag_change_to_$TAG_for_app_version_upgrade”\n  post_build:\n    commands:\n      - echo Commit Completed `date`\n      - echo Pushing Code\n      - git push origin master\n",
+     "Type": "CODEPIPELINE"
+    },
+    "Cache": {
+     "Type": "NO_CACHE"
+    },
+    "EncryptionKey": {
+     "Fn::GetAtt": [
+      "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/eks-workshop-docker-pipeline/ImageTagPushToHelm/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/31QTU/EIBD9LXunuLqaeFWPHiT1BxiWjjpbPhoYdtMQ/rsF2vTm6X3MG3iZB/70yI8HeQudGsZO45mnT5JqZIv1lUB5nnqYXEByfmZv33ZXmSk3gHLGIP2XgitYCksiaqizBdvuhBNotMCTWFmZbzyz0Sxr71BfLPCiUYYiKsksnHh6jWoEKubKGginUc273XRmKM3SxK1NCu7JLROCKVfwaH+E9NIAga/zTbT254h62KsL7y6gapOV5sx6CC56VX/7iDRFatdpbmZipl9n7078/sifD5eA2PloCQ3wvuEf3ItsX6IBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "eks-workshop-stack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "eksworkshopdockerpipelineapplicationrepository3744657F": {
+   "Value": {
+    "Fn::GetAtt": [
+     "eksworkshopdockerpipelineeksworkshopcontainergitC360FCD9",
+     "CloneUrlHttp"
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

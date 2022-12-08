@@ -1,0 +1,20 @@
+{
+  "version": "22.0.0",
+  "files": {
+    "e95f0c85e9b204950c426df5a01130d97f160f2f35a31fcc6e8e54896b16e660": {
+      "source": {
+        "path": "eks-workshop-stack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-ap-northeast-2": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-northeast-2",
+          "objectKey": "e95f0c85e9b204950c426df5a01130d97f160f2f35a31fcc6e8e54896b16e660.json",
+          "region": "ap-northeast-2",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-northeast-2"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

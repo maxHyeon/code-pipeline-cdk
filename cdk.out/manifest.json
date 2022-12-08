@@ -1,0 +1,226 @@
+{
+  "version": "22.0.0",
+  "artifacts": {
+    "eks-workshop-stack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "eks-workshop-stack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "eks-workshop-stack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/ap-northeast-2",
+      "properties": {
+        "templateFile": "eks-workshop-stack.template.json",
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-ap-northeast-2",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-ap-northeast-2",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-ap-northeast-2/e95f0c85e9b204950c426df5a01130d97f160f2f35a31fcc6e8e54896b16e660.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "eks-workshop-stack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-ap-northeast-2",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "eks-workshop-stack.assets"
+      ],
+      "metadata": {
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainer250046F3"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container-git/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainergitC360FCD9"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container-git/eksworkshopstackeksworkshopdockerpipelineeksworkshopcontainerpipelineD08FB083EventRule/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainergiteksworkshopstackeksworkshopdockerpipelineeksworkshopcontainerpipelineD08FB083EventRule15A667E7"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-helm-git/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshophelmgitA1CE24F5"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/ArtifactsBucketEncryptionKey/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyC6AA7A03"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/ArtifactsBucketEncryptionKeyAlias/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketEncryptionKeyAlias89DAB4F0"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/ArtifactsBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucket2ABE0FC7"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/ArtifactsBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineArtifactsBucketPolicy6328C5C9"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineRole47B9A81E"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineRoleDefaultPolicyFF1CDAF0"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineB5DF00DB"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Source/CodeCommit_Source/CodePipelineActionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineSourceCodeCommitSourceCodePipelineActionRoleD1A55ED7"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Source/CodeCommit_Source/CodePipelineActionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineSourceCodeCommitSourceCodePipelineActionRoleDefaultPolicyF6123C8E"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/EventsRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineEventsRole9AC6D9D1"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/EventsRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineEventsRoleDefaultPolicyDB232F9C"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/DockerBuild/DockerBuild_and_Push_ECR/CodePipelineActionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineDockerBuildDockerBuildandPushECRCodePipelineActionRole34C2E433"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/DockerBuild/DockerBuild_and_Push_ECR/CodePipelineActionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineDockerBuildDockerBuildandPushECRCodePipelineActionRoleDefaultPolicyB2D138F3"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Image_Tag_Push_To_Helm/Image_Tag_Push_To_Helm/CodePipelineActionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineImageTagPushToHelmCodePipelineActionRole9EC538CF"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/eks-workshop-container--pipeline/Image_Tag_Push_To_Helm/Image_Tag_Push_To_Helm/CodePipelineActionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineeksworkshopcontainerpipelineImageTagPushToHelmCodePipelineActionRoleDefaultPolicyB860BDBD"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/mySsmParameter/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelinemySsmParameter34FB3938"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/application_repository": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineapplicationrepository3744657F"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/DockerBuild/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineDockerBuildRoleAFA6FFC5"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/DockerBuild/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineDockerBuildRoleDefaultPolicy3B6C9981"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/DockerBuild/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineDockerBuild685274AE"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/ImageTagPushToHelm/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineImageTagPushToHelmRole5ECBB842"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/ImageTagPushToHelm/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineImageTagPushToHelmRoleDefaultPolicy1D9FD39A"
+          }
+        ],
+        "/eks-workshop-stack/eks-workshop-docker-pipeline/ImageTagPushToHelm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "eksworkshopdockerpipelineImageTagPushToHelm21FAE0A9"
+          }
+        ],
+        "/eks-workshop-stack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/eks-workshop-stack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/eks-workshop-stack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "eks-workshop-stack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}
