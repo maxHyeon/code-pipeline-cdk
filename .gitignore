@@ -2,7 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+cdk.context.json
+package-lock.json
+yarn.lock
+.cdk.staging
+cdk.out
 # C extensions
 *.so
 
