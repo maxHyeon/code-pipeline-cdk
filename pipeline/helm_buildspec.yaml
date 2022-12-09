@@ -22,8 +22,8 @@ phases:
       - echo Deploy Started `date`
       - echo Edit Code And Commit
       - colon=$(python -c "print(chr(58))")
-      - git clone https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/eks-cicd-workshop-helm
-      - cd eks-cicd-workshop-helm
+      - git clone https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/eks-workshop-helm
+      - cd eks-workshop-helm
       - git checkout master
       - sed -i -e "/^image:/,/tag:/{/^\([[:space:]]*tag${colon} \).*/s//\1$TAG/}" values.yaml
       - git add .
