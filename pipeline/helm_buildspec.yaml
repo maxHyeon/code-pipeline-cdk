@@ -23,7 +23,7 @@ phases:
       - echo Edit Code And Commit
       - colon=$(python -c "print(chr(58))")
       - git clone ${HELM_REPO_URL}
-      - cd ${PROJ_NAME}
+      - cd ${PROJ_NAME}-helm
       - git checkout master
       - sed -i -e "/^image:/,/tag:/{/^\([[:space:]]*tag${colon} \).*/s//\1$TAG/}" values.yaml
       - sed -i -e "/^image:/,/repository:/{/^\([[:space:]]*repository${colon} \).*/s//\1${REPO_ECR}/}" values.yaml
