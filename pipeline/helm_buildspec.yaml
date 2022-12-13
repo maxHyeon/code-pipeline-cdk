@@ -22,13 +22,15 @@ phases:
       - echo Deploy Started `date`
       - echo Edit Code And Commit
       - colon=$(python -c "print(chr(58))")
+      - replace=$(python -c "print('$REPO_ECR'.replace('/','\/'))")
       - git clone ${HELM_REPO_URL}
       - cd ${PROJ_NAME}-helm
       - git checkout master
       - sed -i -e "/^image:/,/tag:/{/^\([[:space:]]*tag${colon} \).*/s//\1$TAG/}" values.yaml
-      - sed -i -e "/^image:/,/repository:/{/^\([[:space:]]*repository${colon} \).*/s//\1${REPO_ECR}/}" values.yaml
+      - sed -i -e "/^image:/,/repository:/{/^\([[:space:]]*repository${colon} \).*/s//\1${replace}/}" values.yaml
       - git add .
       - cat values.yaml | grep tag
+      - cat values.yaml | grep repository
       - git commit -m “tag_change_to_$TAG_for_app_version_upgrade”
   post_build:
     commands:
