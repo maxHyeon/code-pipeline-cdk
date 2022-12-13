@@ -1,5 +1,6 @@
 from constructs import Construct
 from aws_cdk import CfnOutput, Stack
+from urllib.parse import urlparse
 from aws_cdk import (
     aws_codecommit as codecommit,
     aws_codepipeline as codepipeline,
@@ -43,6 +44,7 @@ class DockerPipelineConstruct(Construct):
             repository_name=f"{name}-helm",
             description=f"Helm Chart"
         )
+
         pipeline = codepipeline.Pipeline(
             scope=self, 
             id=f"{name}-container--pipeline",
@@ -68,7 +70,6 @@ class DockerPipelineConstruct(Construct):
 
         with open('pipeline/helm_buildspec.yaml') as f:
             buildspec_yaml = yaml.load(f,Loader=yaml.FullLoader)
-
         buildspec_image_tag_push = codebuild.BuildSpec.from_object_to_yaml(buildspec_yaml)
 
         docker_build = codebuild.PipelineProject(
@@ -91,6 +92,16 @@ class DockerPipelineConstruct(Construct):
             environment=dict(
                 build_image=codebuild.LinuxBuildImage.AMAZON_LINUX_2_3,
                 privileged=True),
+            environment_variables={
+                'HELM_REPO_URL' : codebuild.BuildEnvironmentVariable(
+                    value=codecommit_repo_helm.repository_clone_url_http
+                ),
+                'REPO_ECR': codebuild.BuildEnvironmentVariable(
+                    value=container_repository.repository_uri),
+                'PROJ_NAME' : codebuild.BuildEnvironmentVariable(
+                    value=f"{name}"
+                )
+            },
             build_spec=buildspec_image_tag_push
         )
 
