@@ -9,6 +9,7 @@ from aws_cdk import (
     aws_ecr as ecr,
     aws_iam as iam,
     aws_ssm as ssm,
+    aws_s3 as s3
 )
 
 import yaml
@@ -72,8 +73,8 @@ class DockerPipelineConstruct(Construct):
             buildspec_yaml = yaml.load(f,Loader=yaml.FullLoader)
         buildspec_image_tag_push = codebuild.BuildSpec.from_object_to_yaml(buildspec_yaml)
 
+
         docker_build = codebuild.PipelineProject(
-            
             scope=self,
             id=f"DockerBuild",
             environment=dict(
@@ -83,6 +84,7 @@ class DockerPipelineConstruct(Construct):
                 'REPO_ECR': codebuild.BuildEnvironmentVariable(
                     value=container_repository.repository_uri),
             },
+            cache= codebuild.Cache.local(codebuild.LocalCacheMode.DOCKER_LAYER),
             build_spec=buildspec_docker
         )
 
